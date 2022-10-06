@@ -4,12 +4,32 @@
     <meta charset="UTF-8">
     <title>form submit</title>
     <script src="index.js" defer></script>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<form novalidate>
-    <label for="test">
-        <input id="test" required  minlength="3" type="text">
+<form novalidate id="form">
+    <label for="eMail">  Email:
+        <input id="eMail" required   type="email">
     </label>
+
+    <label for="Country"> Country:
+        <input id="Country" required minlength="4" type="text">
+    </label>
+
+    <label for="ZIP"> Zip Code:
+        <input id="ZIP" required minlength="4" maxlength="7" type="text">
+    </label>
+
+    <label for="password"> Passwort:
+        <input id="password" required minlength="4" maxlength="7" type="text">
+    </label>
+
+
+    <label for="confirmPassword"> Confirm Passwort:
+        <input id="confirmPassword" required minlength="4" maxlength="7" type="text">
+    </label>
+
+
 </form>
 </body>
 </html>s

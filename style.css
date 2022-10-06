@@ -1,0 +1,8 @@
+input {
+    -webkit-appearance: none;
+    appearance: none;
+    outline: none !important;
+}
+.false, .false:focus {
+    border: 1px solid red;
+}
