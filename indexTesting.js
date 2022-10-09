@@ -1,123 +1,131 @@
-//object Prototype
-
-function getConstraints(obj) {
-    switch (obj.input.id) {
-        case("password"):
-            return passwordValidator
-    }
-    //to do return function that will go through all constraints
-
-}
-function passwordValidator(object) {
-    const checkFunctions = object.checkFunctions //TO DO: this
-    const obj = Object.assign({},
-        checkFunctions.containsNumber(),
-        checkFunctions.containsSymbols(),
-        checkFunctions.lowerChar(),
-        checkFunctions.upperChar())
-    return obj
-}
-function messages(obj) {
-    return {
-        passwordsUnequal: `your password confirmation does not match the password\n`,
-        tooShort(num) {return `input needs to be at least ${num} characters long \n`},
-        tooLong(num) {return`input cannot be longer then ${num} characters\n`},
-        pleaseEnter() {return `please enter a value`},
-        lowerChar: `${this.name} needs at least one Lowercase Letter \n`,
-        upperChar: ` ${obj.getInfo.name} needs at least one Uppercase Letter\n`,
-        containsNumber: `${obj.getInfo.name} needs to contain at least one Number\n`,
-        containsSymbols: `${obj.getInfo.name} needs to contain at least one Symbol\n`,}
-}
-function copyProperties(propertyArray, target) {
-    const obj = {}
-    for (property of propertyArray) {
-        console.log(property)
-        Object.assign(obj, {[property] : target[property]})
-    }
-    return obj
-
-}
-function getTwoMessages(obj) {
-    const object = copyProperties(['passwordsUnequal', 'pleaseEnter', 'lowerChar'], messages(obj))
-    return object
-}
-
-function getInfo() {
-    return {
-    MinLength(input) {
-        return input.getAttribute('minlength')},
-    MaxLength(input){
-        return input.getAttribute('maxlength')},
-    name(input){
-        return input.id}}
-    }
-
-const regex = {
-        lowerChar: /[a-z]/,
-        upperChar: /[A-Z]/,
-        containsNumber: /[0-9]/,
-        // containsEightChar: new RegExp("^(?=.{8,})"),
-        containsSymbols: /[\!\@\#\$\%\^\&\*\(\)\_\+\.\,\;\:\-]/
-    }
-
-function checkFunctions() {
-    return {
-        lowerChar(input) {
-            return this.containsNoRegex(input, obj.regex.lowerChar)
-        },
-        upperChar(input) {
-            return this.containsNoRegex(input, obj.regex.upperChar)
-        },
-        containsNumber(input) {
-            return this.containsNoRegex(input, obj.regex.containsNumber)
-        },
-        containsSymbols(input) {
-            return this.containsNoRegex(input, obj.regex.containsSymbols)
-        },
-        containsNoRegex(input, regex) {
-            if (input.value.search(regex) < 0) {
-                return true
-            }
-        },
-        setPassWordToMatch() {
-            if (validityArray.length === 0) {
-                passwordSet = input.value
-            }
-        }
-    }}
-
-function parentFactory(input) {
-
+function objectFactory(input) {
     const obj = {}
     obj.input = input
     obj.name = input.id
-    obj.getInfo = getInfo(obj)
-    obj.messages = getTwoMessages(obj)
-//
-//     obj.constraints = getConstraints(obj)
-//
-//
-//     console.log(obj)
-//
-//
-//
-//     }
-//
-//     const mainFactory = parentFactory(input)
-//     const funCreate = specifyObjectType(mainFactory)
-//     const obj = funCreate(mainFactory)
-    return obj}
-//
+    obj.restrictions = getConstraints(obj)
+    obj.hasBeenFocused = false
+    input.addEventListener("focusout", () => {
+        checkTheValidity(obj)
+        if(!obj.hasBeenFocused) {
+            input.addEventListener("input", () => {
+                checkTheValidity(obj)
+            })
+        }
 
-//TODO: create password object
+        obj.hasBeenFocused = true
+    })
+
+
+
+    return obj
+}
+function checkTheValidity(object) {
+    const message = validityMessage(object)
+    if(message !== '') {
+        object.input.classList.add('false')
+        object.input.setCustomValidity(message);
+        object.input.reportValidity()
+        return false
+    }
+
+    object.input.setCustomValidity("");
+    object.input.reportValidity()
+    object.input.classList.remove('false')
+    return true
+
+    function validityMessage(obj) {
+        const validityArray = []
+        for (const [key, condition]of Object.entries(obj.restrictions.functions)) {
+
+            if(condition(obj.input))
+            {
+                const response = obj.restrictions.messages[key]
+                validityArray.push(response)
+            }
+        }
+        console.log(validityArray)
+        return validityArray.join('')
+    }
+}
+function getConstraints(obj) {
+    const newObject = {}
+
+    const checkfunctions = {
+
+        regex : {
+            lowerchar: /[a-z]/,
+            upperchar: /[A-Z]/,
+            containsnumber: /[0-9]/,
+            // containseightchar: new regexp("^(?=.{8,})"),
+            containssymbols: /[\!\@\#\$\%\^\&\*\(\)\_\+\.\,\;\:\-]/
+        },
+        containsnoregex(input, regex) {
+             console.log(input.value)
+            if (input.value.search(regex) < 0) {
+                return true
+            } return false
+        },
+        lowerchar() {
+            return (input)  => {return this.containsnoregex(input, this.regex.lowerchar)}
+        },
+        upperchar() {
+            return(input) => {return this.containsnoregex(input, this.regex.upperchar)}
+        },
+        containsnumber() {
+            return(input) => {return this.containsnoregex(input, this.regex.containsnumber)}
+        },
+        containssymbols() {
+            return(input) => {return this.containsnoregex(input, this.regex.containssymbols)}
+        },
+
+
+        setpasswordtomatch() { //to do:take care of this function
+            if (validityarray.length === 0) {
+                passwordset = input.value
+            }
+        }
+    }
+    const messages = {
+        passwordsunequal: `your password confirmation does not match the password\n`,
+        tooshort(num) {return `input needs to be at least ${num} characters long \n`},
+        toolong(num) {return`input cannot be longer then ${num} characters\n`}, //to do.get number
+        pleaseenter() {return `please enter a value`},
+        lowerchar() {return`${obj.name} needs at least one lowercase letter \n`},
+        upperchar(name){return ` ${obj.name} needs at least one uppercase letter\n`},
+        containsnumber(name){ return `${obj.name} needs to contain at least one number\n`},
+        containssymbols(name) {return `${obj.name} needs to contain at least one symbol\n`},
+    }
+    function getinfo() {
+        return {
+            minlength(input) {
+                return input.getattribute('minlength')},
+            maxlength(input){
+                return input.getattribute('maxlength')},
+            name(input){
+                return input.id}}
+    }
+
+
+    const arrays ={
+        "password" : ["lowerchar", "upperchar", "containsnumber", "containssymbols"]
+    }
+    const restrictionsarray = arrays[obj.input.id]
+    newObject.messages =  copyproperties(restrictionsarray, messages)
+    newObject.functions =  copyproperties(restrictionsarray,  checkfunctions)
+    return newObject
+    function copyproperties(propertyarray, target) {
+        const obj = {}
+        for (property of propertyarray) {
+            console.log(property)
+            Object.assign(obj, {[property] : target[property]()})
+        }
+        return obj
+    }
+
+
+}
 
 const element = document.getElementById('password')
-const simon = parentFactory(element)
-
-console.log(simon.messages.pleaseEnter())
-console.log(simon.messages.pleaseEnter())
-console.log(simon.messages.lowerChar)
-
-
-
- 
+const simon = objectFactory(element)
+console.log(simon)
+console.log(simon.restrictions.functions)
